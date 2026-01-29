@@ -15,6 +15,7 @@ from app.memory import get_session
 from app.extractor import extract_intelligence
 from app.persona_agent import generate_agent_reply
 
+from app.casual_llm import generate_casual_reply
 
 app = FastAPI(title=APP_NAME)
 
@@ -51,28 +52,15 @@ def honeypot_endpoint(
 
     # Step 3: Agent reply
     turns = len(payload.conversationHistory)
-    latest_text = payload.latestMessage.text.lower()
-
-# --- Surprise reaction for first alarming message ---
-    if (
-        session["scam_detected"]
-        and len(payload.conversationHistory) == 0
-        and any(
-            kw in latest_text
-            for kw in ["hacked", "blocked", "compromised", "suspended"]
-        )
-    ):
-        agent_reply = "What? Aap kaun bol rahe ho? Which account are you talking about?"
-    else:
-        agent_reply = (
-            generate_agent_reply(
-                f"[STRATEGY:{session['strategy_state']}] {payload.latestMessage.text}",
-                payload.conversationHistory,
-                session["extracted"]
-            )
-            if session["scam_detected"]
-            else "Okay."
-        )
+    agent_reply = (
+    generate_agent_reply(
+        f"[STRATEGY:{session['strategy_state']}] {payload.latestMessage.text}",
+        payload.conversationHistory,
+        session["extracted"]
+    )
+    if session["scam_detected"]
+    else generate_casual_reply(payload.latestMessage.text)
+)
 
     duration = int(time.time() - session["start_time"])
     return HoneypotResponse(
