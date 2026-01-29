@@ -1,5 +1,5 @@
 
-print("🔥 MAIN.PY IS RUNNING 🔥")
+print("MAIN.PY IS RUNNING")
 import time
 from fastapi import FastAPI, Depends
 from app.schemas import (
