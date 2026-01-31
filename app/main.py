@@ -570,3 +570,11 @@ def honeypot_endpoint(
 
     agent_notes=agent_notes
 )
+@app.get("/")
+def health():
+    return {"status": "alive"}
+
+@app.options("/{path:path}")
+def options_handler(path: str):
+    return {"status": "ok"}
+
