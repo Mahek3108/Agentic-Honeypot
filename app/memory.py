@@ -7,15 +7,16 @@ def get_session(session_id: str):
         SESSION_MEMORY[session_id] = {
             "scam_detected": False,
             "strategy_state": "HOOK",
-            "start_time": time.time(),   # conversation start time
-            "callback_sent": False,      # 👈 REQUIRED for GUVI callback
+            "start_time": time.time(),
+            "callback_sent": False,
             "extracted": {
                 "upi_ids": set(),
                 "bank_accounts": set(),
                 "phishing_urls": set(),
-                "phone_numbers": set(),          # optional but future-safe
-                "suspicious_keywords": set()     # optional but future-safe
+                "phone_numbers": set(),
+                "suspicious_keywords": set(),
+                "emails": set(),          # ✅ ADD THIS
+                "misc": {}
             }
         }
-
     return SESSION_MEMORY[session_id]
