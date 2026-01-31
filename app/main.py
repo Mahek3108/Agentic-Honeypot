@@ -449,8 +449,7 @@ app.add_middleware(
 # @app.post("/honeypot", response_model=HoneypotResponse)
 @app.post("/honeypot")
 def honeypot_endpoint(
-    payload: HoneypotRequest,
-    _=Depends(verify_api_key)
+    payload: dict
 ):
     # -----------------------------
     # Session
