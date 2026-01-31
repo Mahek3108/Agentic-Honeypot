@@ -410,8 +410,8 @@ print("MAIN.PY IS RUNNING")
 
 import time
 from fastapi import FastAPI, Depends
-from requests import session
-from app.agent_notes_llm import generate_agent_notes_llm
+#from requests import session
+#from app.agent_notes_llm import generate_agent_notes_llm
 
 from app import agent_notes
 from app.schemas import (
@@ -442,9 +442,9 @@ app.add_middleware(
     allow_methods=["*"],      # VERY IMPORTANT
     allow_headers=["*"],      # VERY IMPORTANT
 )
-@app.options("/honeypot")
-def options_honeypot():
-    return {"status": "ok"}
+# @app.options("/honeypot")
+# def options_honeypot():
+#     return {"status": "ok"}
 
 @app.post("/honeypot", response_model=HoneypotResponse)
 def honeypot_endpoint(
