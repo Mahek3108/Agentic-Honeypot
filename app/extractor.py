@@ -1,4 +1,4 @@
-# import re
+import re
 
 SUSPICIOUS_KEYWORDS = [
     "urgent", "immediately", "blocked", "suspended", "verify",
