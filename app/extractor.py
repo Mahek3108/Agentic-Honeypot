@@ -13,7 +13,8 @@ def extract_intelligence(text: str):
     url_pattern = r"http[s]?://\S+"
 
     # ---------- UPI ----------
-    upi_pattern = r"\b[\w.\-]{2,}@[a-zA-Z]{2,}\b"
+    upi_pattern =  r"\b[a-zA-Z0-9.\-_]{2,}@[a-zA-Z0-9.\-_]{2,}\b"
+
 
     # ---------- Phone Numbers ----------
     phone_pattern = r"""
@@ -32,7 +33,7 @@ def extract_intelligence(text: str):
     upis = set(re.findall(upi_pattern, text))
     urls = set(re.findall(url_pattern, text))
     emails = set(re.findall(email_pattern, text))
-
+    
     # ---------- Bank Accounts (EXCLUDE phones) ----------
     bank_pattern = r"\b\d{11,18}\b"   # 👈 start from 11
     raw_numbers = set(re.findall(bank_pattern, text))
@@ -45,9 +46,22 @@ def extract_intelligence(text: str):
     suspicious_found = [
         kw for kw in SUSPICIOUS_KEYWORDS if kw in text_lower
     ]
+    upi_ids = set()
+    if "upi" in text_lower or "payment" in text_lower or "pay" in text_lower:
+        upi_ids = set(re.findall(upi_pattern, text))
 
+    # return {
+    #     "upi_ids": upi_ids,
+    #     "bank_accounts": set(re.findall(bank_pattern, text)),
+    #     "phishing_urls": set(re.findall(url_pattern, text)),
+    #     "phone_numbers": set(re.findall(phone_pattern, text)),
+    #     "suspicious_keywords": {
+    #         kw for kw in SUSPICIOUS_KEYWORDS if kw in text_lower
+    #     },
+    #     "misc": {}
+    # }
     return {
-        "upi_ids": upis,
+        "upi_ids": upi_ids,
         "bank_accounts": bank_accounts,
         "phishing_urls": urls,
         "phone_numbers": phones,
