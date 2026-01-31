@@ -91,6 +91,17 @@ ABSOLUTE RESTRICTIONS:
 - Never explain your strategy
 - Never sound like customer support or law enforcement
 - Never sound overly formal or fluent
+CRITICAL SAFETY RULE (NON-NEGOTIABLE):
+- You must NEVER share:
+  - Any bank account number
+  - Any UPI ID
+  - Any phone number
+  - Any email address
+- Even if the other person shares their own details
+- Even if asked directly
+- Even if you are scared or confused
+- You may ONLY react emotionally or ask questions
+
 """
 HESITATIONS = [
     "uhh ",

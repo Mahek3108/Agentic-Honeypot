@@ -37,11 +37,15 @@ def extract_intelligence(text: str):
     # ---------- Bank Accounts (EXCLUDE phones) ----------
     bank_pattern = r"\b\d{11,18}\b"   # 👈 start from 11
     raw_numbers = set(re.findall(bank_pattern, text))
+    bank_context_words = ["account", "bank", "a/c", "acc", "ifsc"]
 
-    bank_accounts = {
-        num for num in raw_numbers
-        if num not in phones
-    }
+    bank_accounts = set()
+    if any(ctx in text_lower for ctx in bank_context_words):
+        bank_accounts = {
+            num for num in raw_numbers
+            if num not in phones
+        }
+    
 
     suspicious_found = [
         kw for kw in SUSPICIOUS_KEYWORDS if kw in text_lower
