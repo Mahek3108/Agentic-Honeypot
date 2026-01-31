@@ -446,7 +446,8 @@ app.add_middleware(
 # def options_honeypot():
 #     return {"status": "ok"}
 
-@app.post("/honeypot", response_model=HoneypotResponse)
+# @app.post("/honeypot", response_model=HoneypotResponse)
+@app.post("/honeypot")
 def honeypot_endpoint(
     payload: HoneypotRequest,
     _=Depends(verify_api_key)
@@ -540,36 +541,60 @@ def honeypot_endpoint(
     # -----------------------------
     duration = int(time.time() - session["start_time"])
     #agent_notes = build_agent_notes(session["extracted"])
+    return {
+    "status": "success",
+    "reply": agent_reply,
 
-    return HoneypotResponse(
-    status="success",
+    "scam_detected": session["scam_detected"],
+    "agent_active": session["scam_detected"],
 
-    # GUVI-required
-    reply=agent_reply,
+    "engagement": {
+        "turns": turns,
+        "duration_seconds": duration
+    },
 
-    # internal / extended
-    agent_reply=agent_reply,
+    "extracted_intelligence": {
+        "upi_ids": list(session["extracted"]["upi_ids"]),
+        "bank_accounts": list(session["extracted"]["bank_accounts"]),
+        "phishing_urls": list(session["extracted"]["phishing_urls"]),
+        "phone_numbers": list(session["extracted"]["phone_numbers"]),
+        "emails": list(session["extracted"].get("emails", [])),
+        "suspicious_keywords": list(session["extracted"]["suspicious_keywords"]),
+        "misc": session["extracted"].get("misc", {})
+    },
 
-    scam_detected=session["scam_detected"],
-    agent_active=session["scam_detected"],
+    "agent_notes": agent_notes
+}
 
-    engagement=EngagementMetrics(
-        turns=turns,
-        duration_seconds=duration
-    ),
+#     return HoneypotResponse(
+#     status="success",
 
-    extracted_intelligence=ExtractedIntelligence(
-        upi_ids=list(session["extracted"]["upi_ids"]),
-        bank_accounts=list(session["extracted"]["bank_accounts"]),
-        phishing_urls=list(session["extracted"]["phishing_urls"]),
-        phone_numbers=list(session["extracted"]["phone_numbers"]),
-        emails=list(session["extracted"].get("emails", [])),
-        suspicious_keywords=list(session["extracted"]["suspicious_keywords"]),
-        misc=session["extracted"].get("misc", {})
-    ),
+#     # GUVI-required
+#     reply=agent_reply,
 
-    agent_notes=agent_notes
-)
+#     # internal / extended
+#     agent_reply=agent_reply,
+
+#     scam_detected=session["scam_detected"],
+#     agent_active=session["scam_detected"],
+
+#     engagement=EngagementMetrics(
+#         turns=turns,
+#         duration_seconds=duration
+#     ),
+
+#     extracted_intelligence=ExtractedIntelligence(
+#         upi_ids=list(session["extracted"]["upi_ids"]),
+#         bank_accounts=list(session["extracted"]["bank_accounts"]),
+#         phishing_urls=list(session["extracted"]["phishing_urls"]),
+#         phone_numbers=list(session["extracted"]["phone_numbers"]),
+#         emails=list(session["extracted"].get("emails", [])),
+#         suspicious_keywords=list(session["extracted"]["suspicious_keywords"]),
+#         misc=session["extracted"].get("misc", {})
+#     ),
+
+#     agent_notes=agent_notes
+# )
 @app.get("/")
 def health():
     return {"status": "alive"}
