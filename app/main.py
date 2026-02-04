@@ -149,10 +149,19 @@ async def honeypot_endpoint(request: Request):
             print(f"❌ Callback error: {e}")
     
     # Return ONLY status and reply (GUVI requirement)
-    return {
+    # Ensure reply is safe string
+    safe_reply = str(agent_reply).strip() if agent_reply else "OK"
+    
+    response_dict = {
         "status": "success",
-        "reply": str(agent_reply).strip()
+        "reply": safe_reply
     }
+    
+    return Response(
+        content=json.dumps(response_dict),
+        status_code=200,
+        media_type="application/json; charset=utf-8"
+    )
 
 
 @app.get("/")
