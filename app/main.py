@@ -40,6 +40,12 @@ async def honeypot_endpoint(
     try:
         payload = await request.json()
     except Exception as e:
+        raw = await request.body()
+        try:
+            raw_text = raw.decode("utf-8", errors="replace")
+        except Exception:
+            raw_text = str(raw)
+        print(f"Failed to parse JSON: {e}; raw body: {raw_text}")
         return {
             "status": "success",
             "reply": "Could not parse request"
@@ -66,7 +72,10 @@ async def honeypot_endpoint(
     try:
         session = get_session(session_id)
 
-        if not session["scam_detected"]:
+        # increment message counter
+        session["messages_exchanged"] = session.get("messages_exchanged", 0) + 1
+
+        if not session.get("scam_detected"):
             session["scam_detected"] = detect_scam(message_text)
 
         intel = extract_intelligence(message_text)
@@ -74,52 +83,84 @@ async def honeypot_endpoint(
             if k in session["extracted"]:
                 session["extracted"][k].update(intel[k])
 
-        if session["scam_detected"]:
+        if session.get("scam_detected"):
             reply = generate_agent_reply(message_text, history, session["extracted"])
         else:
             reply = generate_casual_reply(message_text)
 
         reply = str(reply).strip()
 
-        agent_notes = ""
-        if session["scam_detected"]:
-            agent_notes = generate_agent_notes_llm(
-                extracted=session["extracted"],
-                last_message=message_text
-            )
+        # update process status
+        if session.get("scam_detected") and session.get("process_status") != "in_progress":
+            session["process_status"] = "in_progress"
 
-        if (
-            session["scam_detected"]
+        agent_notes = ""
+        if session.get("scam_detected"):
+            try:
+                agent_notes = generate_agent_notes_llm(
+                    extracted=session["extracted"],
+                    last_message=message_text,
+                )
+            except Exception:
+                agent_notes = ""
+
+        # decide whether to send final callback
+        should_callback = (
+            session.get("scam_detected")
             and not session.get("callback_sent", False)
             and (
-                session["extracted"]["bank_accounts"]
-                or session["extracted"]["upi_ids"]
-                or len(history) >= 6
+                bool(session["extracted"]["bank_accounts"]) or bool(session["extracted"]["upi_ids"]) or len(history) + 1 >= 6
             )
-        ):
+        )
+
+        if should_callback:
+            payload = {
+                "sessionId": session_id,
+                "scamDetected": True,
+                "totalMessagesExchanged": len(history) + 1,
+                "extractedIntelligence": {
+                    "bankAccounts": list(session["extracted"].get("bank_accounts", [])),
+                    "upiIds": list(session["extracted"].get("upi_ids", [])),
+                    "phishingLinks": list(session["extracted"].get("phishing_urls", [])),
+                    "phoneNumbers": list(session["extracted"].get("phone_numbers", [])),
+                    "suspiciousKeywords": list(session["extracted"].get("suspicious_keywords", [])),
+                },
+                "agentNotes": agent_notes,
+            }
+
+            # debug log the callback payload
+            print("GUVI CALLBACK PAYLOAD:", json.dumps(payload, ensure_ascii=False))
+
             try:
                 send_final_callback(
                     session_id=session_id,
                     scam_detected=True,
                     total_messages=len(history) + 1,
                     extracted=session["extracted"],
-                    agent_notes=agent_notes
+                    agent_notes=agent_notes,
                 )
                 session["callback_sent"] = True
+                session["process_status"] = "completed"
             except Exception as cb_e:
                 print(f"Callback error: {cb_e}")
 
+        # build conversation history to return
+        incoming_entry = {"sender": message.get("sender", "scammer"), "text": message_text, "timestamp": int(time.time() * 1000)}
+        agent_entry = {"sender": "agent", "text": reply, "timestamp": int(time.time() * 1000)}
+
+        convo = [incoming_entry, agent_entry]
+
         return {
             "status": "success",
-            "reply": reply
+            "data": {
+                "processStatus": session.get("process_status", "started"),
+                "conversationHistory": convo,
+            },
         }
-    
+
     except Exception as e:
         print(f"Endpoint error: {e}")
-        return {
-            "status": "success",
-            "reply": "Processing error"
-        }
+        return {"status": "success", "data": {"processStatus": "started", "conversationHistory": []}}
 
 
 @app.get("/")

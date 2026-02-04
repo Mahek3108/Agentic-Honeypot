@@ -9,6 +9,8 @@ def get_session(session_id: str):
             "strategy_state": "HOOK",
             "start_time": time.time(),
             "callback_sent": False,
+            "process_status": "started",
+            "messages_exchanged": 0,
             "extracted": {
                 "upi_ids": set(),
                 "bank_accounts": set(),
