@@ -22,7 +22,7 @@ from app.agent_notes_llm import generate_agent_notes_llm
 app = FastAPI(title=APP_NAME)
 
 
-@app.post("/honeypot", response_model=HoneypotResponse)
+@app.post("/honeypot")
 def honeypot_endpoint(
     payload: HoneypotRequest,
     _=Depends(verify_api_key)
@@ -119,12 +119,8 @@ def honeypot_endpoint(
         agent_notes=agent_notes
     )
 
-    # Return dict with camelCase keys expected by GUVI
-    try:
-        return resp.model_dump(by_alias=True)
-    except Exception:
-        # Fallback for environments without pydantic v2
-        return resp.dict(by_alias=True)
+    # Return model object; FastAPI serializes with aliases
+    return resp
 
 
 @app.get("/")
