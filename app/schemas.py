@@ -1,15 +1,15 @@
 from pydantic import BaseModel
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Union
 
 class IncomingMessage(BaseModel):
-    sender: str
+    sender: Optional[str] = None
     text: str
-    timestamp: int
+    timestamp: Optional[Union[int, str]] = None
 
 class ConversationMessage(BaseModel):
-    sender: str
+    sender: Optional[str] = None
     text: str
-    timestamp: int
+    timestamp: Optional[Union[int, str]] = None
 
 class HoneypotRequest(BaseModel):
     sessionId: str

@@ -49,12 +49,14 @@ def honeypot_endpoint(
     # -----------------------------
     # Agent reply
     # -----------------------------
-    turns = len(payload.conversationHistory)
+    
+    history = payload.conversationHistory or []
+    turns = len(history)
 
     if session["scam_detected"]:
         agent_reply = generate_agent_reply(
             message_text,
-            payload.conversationHistory,
+            history,
             session["extracted"]
         )
     else:
@@ -79,7 +81,7 @@ def honeypot_endpoint(
         and (
             session["extracted"]["bank_accounts"]
             or session["extracted"]["upi_ids"]
-            or len(payload.conversationHistory) >= 6
+            or len(history) >= 6
         )
     ):
         send_final_callback(
