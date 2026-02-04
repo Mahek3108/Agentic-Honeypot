@@ -48,11 +48,10 @@ async def honeypot_endpoint(
         if not message_text:
             return {"status": "success", "reply": "Unable to process empty message"}
     except Exception as e:
-    session = get_session(session_i
-    # -----------------------------
+        return {"status": "success", "reply": "Unable to process message"}
+
     # Session
-    # -----------------------------
-    session = get_session(payload.sessionId)
+    session = get_session(session_id)
 
     # -----------------------------
     # Scam detection
@@ -104,8 +103,8 @@ async def honeypot_endpoint(
         )
     ):
         send_final_callback(
-            session_id=payload.sessionId,
-            scam_detectsession_i
+            session_id=session_id,
+            scam_detected=True,
             total_messages=turns + 1,
             extracted=session["extracted"],
             agent_notes=agent_notes
@@ -114,28 +113,7 @@ async def honeypot_endpoint(
 
     # -----------------------------
     # Response
-    # -----------------------------
     duration = int(time.time() - session["start_time"])
-
-    resp = HoneypotResponse(
-        status="success",
-        reply=agent_reply,
-        agent_reply=agent_reply,
-        scam_detected=session["scam_detected"],
-        agent_active=session["scam_detected"],
-        engagement=EngagementMetrics(
-            turns=turns,
-            duration_seconds=duration
-        ),
-        extracted_intelligence=ExtractedIntelligence(
-            upi_ids=list(session["extracted"]["upi_ids"]),
-            bank_accounts=list(session["extracted"]["bank_accounts"]),
-            phishing_urls=list(session["extracted"]["phishing_urls"]),
-            phone_numbers=list(session["extracted"]["phone_numbers"]),
-            suspicious_keywords=list(session["extracted"]["suspicious_keywords"]),
-        ),
-        agent_notes=agent_notes
-    )
 
     # Return minimal GUVI-compliant response
     return {
