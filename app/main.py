@@ -2,6 +2,7 @@ print("MAIN.PY IS RUNNING")
 
 import time
 from fastapi import FastAPI, Depends
+
 from app.schemas import (
     HoneypotRequest,
     HoneypotResponse,
@@ -20,22 +21,23 @@ from app.agent_notes_llm import generate_agent_notes_llm
 
 app = FastAPI(title=APP_NAME)
 
+
 @app.post("/honeypot", response_model=HoneypotResponse)
 def honeypot_endpoint(
     payload: HoneypotRequest,
     _=Depends(verify_api_key)
 ):
     # -----------------------------
-    # REQUIRED FIELD (GUVI STRICT)
+    # Accept BOTH message formats
     # -----------------------------
     incoming = payload.message or payload.latestMessage
 
-    if not incoming:
-        # GUVI invalid payload
+    # NEVER throw 422 for GUVI
+    if not incoming or not incoming.text:
         return HoneypotResponse(
             status="success",
-            reply="Sorry, I did not understand.",
-            agent_reply="Sorry, I did not understand.",
+            reply="Who is this?",
+            agent_reply="Who is this?",
             scam_detected=False,
             agent_active=False,
             engagement=EngagementMetrics(turns=0, duration_seconds=0),
@@ -44,7 +46,11 @@ def honeypot_endpoint(
         )
 
     message_text = incoming.text
+    history = payload.conversationHistory or []
 
+    # -----------------------------
+    # Session
+    # -----------------------------
     session = get_session(payload.sessionId)
 
     # -----------------------------
@@ -63,8 +69,6 @@ def honeypot_endpoint(
     # -----------------------------
     # Agent reply
     # -----------------------------
-    
-    history = payload.conversationHistory or []
     turns = len(history)
 
     if session["scam_detected"]:
@@ -77,7 +81,7 @@ def honeypot_endpoint(
         agent_reply = generate_casual_reply(message_text)
 
     # -----------------------------
-    # Agent notes (LLM)
+    # Agent notes
     # -----------------------------
     agent_notes = ""
     if session["scam_detected"]:
@@ -95,7 +99,7 @@ def honeypot_endpoint(
         and (
             session["extracted"]["bank_accounts"]
             or session["extracted"]["upi_ids"]
-            or len(history) >= 6
+            or turns >= 6
         )
     ):
         send_final_callback(
@@ -107,6 +111,9 @@ def honeypot_endpoint(
         )
         session["callback_sent"] = True
 
+    # -----------------------------
+    # Response
+    # -----------------------------
     duration = int(time.time() - session["start_time"])
 
     return HoneypotResponse(
@@ -128,6 +135,7 @@ def honeypot_endpoint(
         ),
         agent_notes=agent_notes
     )
+
 
 @app.get("/")
 def health():

@@ -1,16 +1,9 @@
 from pydantic import BaseModel
-from typing import List, Optional, Dict, Union
+from typing import List, Optional, Dict, Any, Union
 
 
 class IncomingMessage(BaseModel):
-    sender: Optional[str] = "user"
-    role: Optional[str] = None
-    text: str
-    timestamp: Optional[Union[int, str, float]] = None
-
-
-class ConversationMessage(BaseModel):
-    sender: Optional[str] = "user"
+    sender: Optional[str] = None
     role: Optional[str] = None
     text: str
     timestamp: Optional[Union[int, str, float]] = None
@@ -19,12 +12,14 @@ class ConversationMessage(BaseModel):
 class HoneypotRequest(BaseModel):
     sessionId: str
 
-    # GUVI MAY SEND EITHER
+    # GUVI may send either
     message: Optional[IncomingMessage] = None
     latestMessage: Optional[IncomingMessage] = None
 
-    conversationHistory: List[ConversationMessage] = []
-    metadata: Optional[Dict] = None
+    # GUVI sometimes sends empty / malformed history
+    conversationHistory: Optional[List[Dict[str, Any]]] = []
+
+    metadata: Optional[Dict[str, Any]] = None
 
 
 class EngagementMetrics(BaseModel):
@@ -52,3 +47,4 @@ class HoneypotResponse(BaseModel):
 
     agent_reply: str
     agent_notes: str
+
