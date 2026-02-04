@@ -3,15 +3,15 @@ from typing import List, Optional, Dict, Any, Union
 
 
 class IncomingMessage(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
     
-    sender: str
+    sender: Optional[str] = None
     text: str
-    timestamp: Union[int, str, float]
+    timestamp: Optional[Union[int, str, float]] = None
 
 
 class HoneypotRequest(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
     
     sessionId: str
     message: IncomingMessage

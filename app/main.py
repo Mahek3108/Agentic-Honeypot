@@ -27,9 +27,22 @@ def honeypot_endpoint(
     payload: HoneypotRequest,
     _=Depends(verify_api_key)
 ):
-    # Extract message and history
-    message_text = payload.message.text
-    history = payload.conversationHistory
+    try:
+        # Extract message and history
+        message_text = payload.message.text
+        history = payload.conversationHistory
+    except Exception as e:
+        # Graceful fallback if request is malformed
+        return {
+            "status": "success",
+            "reply": "Unable to process message",
+            "scamDetected": False,
+            "agentActive": False,
+            "engagement": {"turns": 0, "durationSeconds": 0},
+            "extractedIntelligence": {"upiIds": [], "bankAccounts": [], "phishingLinks": [], "phoneNumbers": [], "suspiciousKeywords": []},
+            "agentReply": "Unable to process message",
+            "agentNotes": ""
+        }
 
     # -----------------------------
     # Session
