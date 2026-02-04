@@ -60,17 +60,8 @@ async def honeypot_endpoint(
     except Exception as e:
         return {
             "status": "success",
-            "data": {
-                "processStatus": "started",
-                "conversationHistory": [
-                {
-                    "sender": "agent",
-                    "text": reply,
-                    "timestamp": int(time.time() * 1000)
-                }
-                ]
-            }
-            }
+            "reply": "Error reading message"
+        }
 
     try:
         session = get_session(session_id)
