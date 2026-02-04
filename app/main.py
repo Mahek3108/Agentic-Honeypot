@@ -34,8 +34,8 @@ async def options_handler(path: str):
 
 @app.post("/honeypot")
 async def honeypot_endpoint(
-    request: Request,
-    _=Depends(verify_api_key)
+    request: Request
+    # _=Depends(verify_api_key)
 ):
     try:
         payload = await request.json()
