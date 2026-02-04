@@ -99,7 +99,7 @@ def honeypot_endpoint(
     # -----------------------------
     duration = int(time.time() - session["start_time"])
 
-    return HoneypotResponse(
+    resp = HoneypotResponse(
         status="success",
         reply=agent_reply,
         agent_reply=agent_reply,
@@ -118,6 +118,13 @@ def honeypot_endpoint(
         ),
         agent_notes=agent_notes
     )
+
+    # Return dict with camelCase keys expected by GUVI
+    try:
+        return resp.model_dump(by_alias=True)
+    except Exception:
+        # Fallback for environments without pydantic v2
+        return resp.dict(by_alias=True)
 
 
 @app.get("/")
