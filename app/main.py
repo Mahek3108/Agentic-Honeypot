@@ -28,7 +28,21 @@ def honeypot_endpoint(
     # -----------------------------
     # REQUIRED FIELD (GUVI STRICT)
     # -----------------------------
-    incoming = payload.message
+    incoming = payload.message or payload.latestMessage
+
+    if not incoming:
+        # GUVI invalid payload
+        return HoneypotResponse(
+            status="success",
+            reply="Sorry, I did not understand.",
+            agent_reply="Sorry, I did not understand.",
+            scam_detected=False,
+            agent_active=False,
+            engagement=EngagementMetrics(turns=0, duration_seconds=0),
+            extracted_intelligence=ExtractedIntelligence(),
+            agent_notes=""
+        )
+
     message_text = incoming.text
 
     session = get_session(payload.sessionId)
