@@ -1,24 +1,21 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional, Dict, Any, Union
 
 
 class IncomingMessage(BaseModel):
-    sender: Optional[str] = None
-    role: Optional[str] = None
+    model_config = ConfigDict(populate_by_name=True)
+    
+    sender: str
     text: str
-    timestamp: Optional[Union[int, str, float]] = None
+    timestamp: Union[int, str, float]
 
 
 class HoneypotRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    
     sessionId: str
-
-    # GUVI may send either
-    message: Optional[IncomingMessage] = None
-    latestMessage: Optional[IncomingMessage] = None
-
-    # GUVI sometimes sends empty / malformed history
-    conversationHistory: Optional[List[Dict[str, Any]]] = []
-
+    message: IncomingMessage
+    conversationHistory: List[Dict[str, Any]] = []
     metadata: Optional[Dict[str, Any]] = None
 
 

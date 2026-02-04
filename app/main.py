@@ -27,26 +27,9 @@ def honeypot_endpoint(
     payload: HoneypotRequest,
     _=Depends(verify_api_key)
 ):
-    # -----------------------------
-    # Accept BOTH message formats
-    # -----------------------------
-    incoming = payload.message or payload.latestMessage
-
-    # NEVER throw 422 for GUVI
-    if not incoming or not incoming.text:
-        return HoneypotResponse(
-            status="success",
-            reply="Who is this?",
-            agent_reply="Who is this?",
-            scam_detected=False,
-            agent_active=False,
-            engagement=EngagementMetrics(turns=0, duration_seconds=0),
-            extracted_intelligence=ExtractedIntelligence(),
-            agent_notes=""
-        )
-
-    message_text = incoming.text
-    history = payload.conversationHistory or []
+    # Extract message and history
+    message_text = payload.message.text
+    history = payload.conversationHistory
 
     # -----------------------------
     # Session
