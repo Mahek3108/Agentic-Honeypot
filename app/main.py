@@ -99,9 +99,9 @@ async def honeypot_endpoint(
         )
     ):
         send_final_callback(
-            session_id=payload.sessionId,
+            session_id=session_id,
             scam_detected=True,
-            total_messasession_i
+            total_messages=turns + 1,
             extracted=session["extracted"],
             agent_notes=agent_notes
         )
