@@ -115,11 +115,15 @@ async def honeypot_endpoint(
     # Response
     duration = int(time.time() - session["start_time"])
 
-    # Return minimal GUVI-compliant response
-    return {
-        "status": "success",
-        "reply": agent_reply
-    }
+    # Return clean JSONResponse with explicit Content-Type
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status": "success",
+            "reply": agent_reply
+        },
+        headers={"Content-Type": "application/json"}
+    )
 
 
 @app.get("/")
