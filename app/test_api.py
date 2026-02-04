@@ -8,7 +8,7 @@ import json
 import requests
 
 # CHANGE THESE TO YOUR ACTUAL VALUES
-API_URL = "https://agentic-honeypot-sb7i.onrender.com/honeypot"  # Your deployed API URL
+API_URL = "http://localhost:8000/honeypot" # Your deployed API URL
 API_KEY = "changeme"  # Your API key
 
 def test_first_message():
