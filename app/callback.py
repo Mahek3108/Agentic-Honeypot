@@ -18,19 +18,20 @@ def send_final_callback(
     Must be called ONLY ONCE per session.
     """
 
+    # callback.py mein check karein ki keys exactly yehi hon:
     payload = {
-        "sessionId": session_id,
-        "scamDetected": scam_detected,
-        "totalMessagesExchanged": total_messages,
-        "extractedIntelligence": {
-            "bankAccounts": list(extracted.get("bank_accounts", [])),
-            "upiIds": list(extracted.get("upi_ids", [])),
-            "phishingLinks": list(extracted.get("phishing_urls", [])),
-            "phoneNumbers": list(extracted.get("phone_numbers", [])),
-            "suspiciousKeywords": list(extracted.get("suspicious_keywords", [])),
-        },
-        "agentNotes": agent_notes
-    }
+    "sessionId": session_id,
+    "scamDetected": scam_detected,
+    "totalMessagesExchanged": total_messages,
+    "extractedIntelligence": {
+        "bankAccounts": list(extracted.get("bank_accounts", [])),
+        "upiIds": list(extracted.get("upi_ids", [])),
+        "phishingLinks": list(extracted.get("phishing_urls", [])), # Section 12 key name
+        "phoneNumbers": list(extracted.get("phone_numbers", [])),   # Section 12 key name
+        "suspiciousKeywords": list(extracted.get("suspicious_keywords", []))
+    },
+    "agentNotes": agent_notes
+}
 
     # 🔹 Optional: log payload size (not full payload)
     logging.info(

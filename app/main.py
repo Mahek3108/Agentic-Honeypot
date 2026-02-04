@@ -152,16 +152,15 @@ async def honeypot_endpoint(
 
         return {
             "status": "success",
-            "data": {
-                "processStatus": session.get("process_status", "started"),
-                "conversationHistory": convo,
-            },
+            "reply": str(reply),
         }
 
     except Exception as e:
         print(f"Endpoint error: {e}")
-        return {"status": "success", "data": {"processStatus": "started", "conversationHistory": []}}
-
+        return {
+            "status": "success", 
+            "reply": "I'm sorry, I didn't quite catch that. Can you repeat?"
+        }
 
 @app.get("/")
 def health():
