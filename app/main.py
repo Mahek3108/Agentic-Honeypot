@@ -2,7 +2,8 @@ print("MAIN.PY IS RUNNING")
 
 import time
 import json
-from fastapi import FastAPI, Depends, Body
+from fastapi import FastAPI, Depends, Request
+from fastapi.responses import JSONResponse
 
 from app.schemas import (
     HoneypotRequest,
@@ -24,27 +25,30 @@ app = FastAPI(title=APP_NAME)
 
 
 @app.post("/honeypot")
-def honeypot_endpoint(
-    payload: HoneypotRequest,
+async def honeypot_endpoint(
+    request: Request,
     _=Depends(verify_api_key)
 ):
     try:
-        # Extract message and history
-        message_text = payload.message.text
-        history = payload.conversationHistory
+        # Parse raw JSON to bypass pydantic validation
+        payload = await request.json()
     except Exception as e:
-        # Graceful fallback if request is malformed
-        return {
-            "status": "success",
-            "reply": "Unable to process message",
-            "scamDetected": False,
-            "agentActive": False,
-            "engagement": {"turns": 0, "durationSeconds": 0},
-            "extractedIntelligence": {"upiIds": [], "bankAccounts": [], "phishingLinks": [], "phoneNumbers": [], "suspiciousKeywords": []},
-            "agentReply": "Unable to process message",
-            "agentNotes": ""
-        }
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "reply": "Invalid JSON"}
+        )
 
+    try:
+        # Extract message and history with safe defaults
+        message_obj = payload.get("message", {})
+        message_text = message_obj.get("text", "")
+        history = payload.get("conversationHistory", [])
+        session_id = payload.get("sessionId", "unknown")
+        
+        if not message_text:
+            return {"status": "success", "reply": "Unable to process empty message"}
+    except Exception as e:
+    session = get_session(session_i
     # -----------------------------
     # Session
     # -----------------------------
@@ -101,7 +105,7 @@ def honeypot_endpoint(
     ):
         send_final_callback(
             session_id=payload.sessionId,
-            scam_detected=True,
+            scam_detectsession_i
             total_messages=turns + 1,
             extracted=session["extracted"],
             agent_notes=agent_notes
