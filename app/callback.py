@@ -23,7 +23,6 @@ def send_final_callback(
         "scamDetected": scam_detected,
         "totalMessagesExchanged": total_messages,
         "extractedIntelligence": {
-            # 🔹 MUST MATCH GUVI FIELD NAMES (camelCase)
             "bankAccounts": list(extracted.get("bank_accounts", [])),
             "upiIds": list(extracted.get("upi_ids", [])),
             "phishingLinks": list(extracted.get("phishing_urls", [])),

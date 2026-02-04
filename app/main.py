@@ -1,7 +1,8 @@
 print("MAIN.PY IS RUNNING")
 
 import time
-from fastapi import FastAPI, Depends
+import json
+from fastapi import FastAPI, Depends, Body
 
 from app.schemas import (
     HoneypotRequest,
@@ -132,8 +133,11 @@ def honeypot_endpoint(
         agent_notes=agent_notes
     )
 
-    # Return model object; FastAPI serializes with aliases
-    return resp
+    # Return minimal GUVI-compliant response
+    return {
+        "status": "success",
+        "reply": agent_reply
+    }
 
 
 @app.get("/")
