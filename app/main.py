@@ -318,7 +318,7 @@ async def honeypot_endpoint(
     message_text = incoming.text.strip()
 
     session = get_session(payload.sessionId)
-    session["messages_exchanged"] = session.get("messages_exchanged", 0) + 1
+    #session["messages_exchanged"] = session.get("messages_exchanged", 0) + 1
     history = payload.conversationHistory or []
     
     # Scam detection
@@ -358,7 +358,7 @@ async def honeypot_endpoint(
         send_final_callback(
             session_id=payload.sessionId,
             scam_detected=True,
-            total_messages=session["messages_exchanged"],
+            total_messages= len(history)+2,
             extracted=session["extracted"],
             agent_notes=agent_notes
         )
