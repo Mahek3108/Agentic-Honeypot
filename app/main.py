@@ -328,7 +328,12 @@ async def honeypot_endpoint(
     intel = extract_intelligence(message_text)
     for k in intel:
         session["extracted"][k].update(intel[k])
-
+    any_intel_found = any([
+        session["extracted"].get("bank_accounts"),
+        session["extracted"].get("upi_ids"),
+        session["extracted"].get("phishing_urls"),
+        session["extracted"].get("phone_numbers")
+    ])
     # Agent reply
     if session["scam_detected"]:
         reply = generate_agent_reply(message_text, history, session["extracted"])
@@ -348,9 +353,8 @@ async def honeypot_endpoint(
         session["scam_detected"]
         and not session.get("callback_sent", False)
         and (
-            session["extracted"]["bank_accounts"]
-            or session["extracted"]["upi_ids"]
-            or len(history) >= 6
+            any_intel_found
+            or len(history) >= 30
         )
     ):
         send_final_callback(
