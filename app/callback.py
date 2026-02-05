@@ -3,7 +3,7 @@
 import requests
 import logging
 
-GUVI_CALLBACK_URL = "https://viola-tetrabasic-elliptically.ngrok-free.dev/updateHoneyPotFinalResult"
+GUVI_CALLBACK_URL = "https://webhook.site/e490e5f9-ed4b-46d2-acf6-8542108371db"
 
 
 def send_final_callback(
