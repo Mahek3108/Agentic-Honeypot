@@ -146,54 +146,36 @@ def vary_sentence(text: str) -> str:
 
 # app/persona_agent.py
 from app.llm_client import call_llm
-import random
-from app.llm_client import call_llm
 
 def generate_agent_reply(latest_message: str, history: list, extracted: dict) -> str:
-    # 1. Sirf last 5 messages lo (Pure history bhejoge toh LLM confuse ho jayega)
-    # Humein sirf ye dekhna hai ki pichli baar humne kya bola tha
-    recent_history = ""
-    for msg in history[-5:]:
-        role = "Scammer" if hasattr(msg, 'type') and msg.type == 'user' else "Mrs. Sharma"
-        recent_history += f"{role}: {msg.text}\n"
-
-    # 2. Intel status check (taaki Mrs. Sharma react kare agar bank details mil gayi hain)
-    has_bank = len(extracted.get("bank_accounts", [])) > 0
-    
-    # 3. Dynamic Prompting (Loop breaker)
-    # Hum LLM ko "Short Term Memory" de rahe hain
     context = f"""
-{recent_history}
-Scammer: "{latest_message}"
+Conversation so far:
+{[m.text for m in history]}
 
-Mrs. Sharma, listen carefully:
-- DO NOT repeat "what is happening" or "I don't understand".
-- If the scammer is asking for OTP again, give a new excuse:
-  * "Phone is very slow today"
-  * "Wait, I am looking for my glasses"
-  * "Beta, signal is very weak, message not showing clearly"
-- If they mentioned account number {list(extracted['bank_accounts']) if has_bank else ''}, be shocked but don't give OTP.
-- Respond in 1 line of natural Hinglish.
-- No translations in brackets.
+Latest message from other person:
+"{latest_message}"
+
+Extracted so far:
+UPI IDs: {list(extracted['upi_ids'])}
+Bank Accounts: {list(extracted['bank_accounts'])}
+Links: {list(extracted['phishing_urls'])}
+
+Respond like a real confused Indian user over text chat.
+Do NOT sound confident or technical.
 """
 
     try:
-        # Temperature badha diya (0.85) taaki har baar naya response aaye
-        reply = call_llm(
+        raw_reply = call_llm(
             system_prompt=SYSTEM_PROMPT,
             user_prompt=context,
-            temperature=0.85 
+            temperature=0.65
         )
 
-        # 4. Safai (Prefixes hatao)
-        final_reply = reply.replace("Mrs. Sharma:", "").replace("Honeypot:", "").strip()
-        
-        # 5. Typos (Zinda insaan wali feel)
-        if random.random() < 0.2: # 20% chance of a small typo
-            final_reply = final_reply.replace("please", "plz").replace("account", "accnt")
+        reply = vary_sentence(raw_reply)
+        reply = add_hesitation(reply)
+        reply = maybe_add_hinglish(reply)
 
-        return final_reply
+        return reply.strip()
 
-    except Exception as e:
-        print(f"LLM Error: {e}")
-        return "Beta, please wait... phone hang ho raha hai mera."
+    except Exception:
+        return "Please help me, I am very confused."
