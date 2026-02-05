@@ -3,7 +3,7 @@
 import requests
 import logging
 
-GUVI_CALLBACK_URL = "https://hackathon.guvi.in/api/updateHoneyPotFinalResult"
+GUVI_CALLBACK_URL = "https://viola-tetrabasic-elliptically.ngrok-free.dev/updateHoneyPotFinalResult"
 
 
 def send_final_callback(
@@ -18,7 +18,6 @@ def send_final_callback(
     Must be called ONLY ONCE per session.
     """
 
-    # callback.py mein check karein ki keys exactly yehi hon:
     payload = {
     "sessionId": session_id,
     "scamDetected": scam_detected,
@@ -33,7 +32,6 @@ def send_final_callback(
     "agentNotes": agent_notes
 }
 
-    # 🔹 Optional: log payload size (not full payload)
     logging.info(
         f"Sending GUVI callback | session={session_id} | messages={total_messages}"
     )
