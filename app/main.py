@@ -347,12 +347,11 @@ async def honeypot_endpoint(
             extracted=session["extracted"],
             last_message=message_text
         )
-
-    # Final callback (ONCE)
+    
     if (
         session["scam_detected"]
         and not session.get("callback_sent", False)
-        and len(history) >= 30
+        and len(history) >= 10
         
     ):
         send_final_callback(
@@ -364,7 +363,6 @@ async def honeypot_endpoint(
         )
         session["callback_sent"] = True
 
-    # 🔹 GUVI EXPECTS ONLY THIS
     return {
         "status": "success",
         "reply": reply.strip()
