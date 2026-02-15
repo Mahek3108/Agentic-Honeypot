@@ -63,7 +63,7 @@ import logging
 GUVI_PRODUCTION_URL = "https://hackathon.guvi.in/api/updateHoneyPotFinalResult"
 
 # 2. Tera Personal Webhook (Jahan tum live check karoge)
-MY_PERSONAL_WEBHOOK = "https://webhook.site/c516dd5a-c12e-4797-b92c-d6960b9c8d5c"
+MY_PERSONAL_WEBHOOK = "https://viola-tetrabasic-elliptically.ngrok-free.dev/updateHoneyPotFinalResult"
 
 def send_final_callback(
     session_id: str,
