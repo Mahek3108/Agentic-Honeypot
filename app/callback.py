@@ -147,7 +147,7 @@ def send_final_callback(
             "suspiciousKeywords": list(extracted.get("suspicious_keywords", [])),
             
             # ✅ NEW FIELD
-            "emails": list(extracted.get("emails", []))
+            "emailAddresses": list(extracted.get("emails", []))
         },
         "agentNotes": agent_notes
     }
