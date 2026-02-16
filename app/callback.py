@@ -60,9 +60,68 @@ import requests
 import logging
 
 # 1. GUVI ka Fixed Endpoint (Jahan marks milenge)
-GUVI_PRODUCTION_URL = "https://hackathon.guvi.in/api/updateHoneyPotFinalResult"
+# GUVI_PRODUCTION_URL = "https://hackathon.guvi.in/api/updateHoneyPotFinalResult"
 
-# 2. Tera Personal Webhook (Jahan tum live check karoge)
+# # 2. Tera Personal Webhook (Jahan tum live check karoge)
+# MY_PERSONAL_WEBHOOK = "https://viola-tetrabasic-elliptically.ngrok-free.dev/updateHoneyPotFinalResult"
+
+# def send_final_callback(
+#     session_id: str,
+#     scam_detected: bool,
+#     total_messages: int,
+#     extracted: dict,
+#     agent_notes: str
+# ):
+#     """
+#     Sends final intelligence payload to BOTH GUVI and Personal Webhook.
+#     """
+
+#     # Payload as per Section 12 (CamelCase Keys)
+#     payload = {
+#         "sessionId": session_id,
+#         "scamDetected": scam_detected,
+#         "totalMessagesExchanged": total_messages,
+#         "extractedIntelligence": {
+#             "bankAccounts": list(extracted.get("bank_accounts", [])),
+#             "upiIds": list(extracted.get("upi_ids", [])),
+#             "phishingLinks": list(extracted.get("phishing_urls", [])), 
+#             "phoneNumbers": list(extracted.get("phone_numbers", [])),
+#             "suspiciousKeywords": list(extracted.get("suspicious_keywords", []))
+#         },
+#         "agentNotes": agent_notes
+#     }
+
+#     logging.info(f"Initiating callbacks for session={session_id}")
+
+#     # --- ACTION 1: Send to GUVI Production ---
+#     for attempt in range(2):
+#         try:
+#             res = requests.post(
+#                 GUVI_PRODUCTION_URL,
+#                 json=payload,
+#                 headers={"Content-Type": "application/json"},
+#                 timeout=10
+#             )
+#             logging.info(f"GUVI Production success | status={res.status_code}")
+#             break
+#         except Exception as e:
+#             logging.error(f"GUVI Production failed (attempt {attempt + 1}): {e}")
+
+#     # --- ACTION 2: Mirror to Personal Webhook (For your tracking) ---
+#     try:
+#         requests.post(
+#             MY_PERSONAL_WEBHOOK,
+#             json=payload,
+#             headers={"Content-Type": "application/json"},
+#             timeout=5
+#         )
+#         logging.info("Mirror copy sent to Webhook.site successfully.")
+#     except Exception as e:
+#         logging.error(f"Mirroring to Webhook failed: {e}")
+import requests
+import logging
+
+GUVI_PRODUCTION_URL = "https://hackathon.guvi.in/api/updateHoneyPotFinalResult"
 MY_PERSONAL_WEBHOOK = "https://viola-tetrabasic-elliptically.ngrok-free.dev/updateHoneyPotFinalResult"
 
 def send_final_callback(
@@ -76,7 +135,6 @@ def send_final_callback(
     Sends final intelligence payload to BOTH GUVI and Personal Webhook.
     """
 
-    # Payload as per Section 12 (CamelCase Keys)
     payload = {
         "sessionId": session_id,
         "scamDetected": scam_detected,
@@ -84,16 +142,19 @@ def send_final_callback(
         "extractedIntelligence": {
             "bankAccounts": list(extracted.get("bank_accounts", [])),
             "upiIds": list(extracted.get("upi_ids", [])),
-            "phishingLinks": list(extracted.get("phishing_urls", [])), 
+            "phishingLinks": list(extracted.get("phishing_urls", [])),
             "phoneNumbers": list(extracted.get("phone_numbers", [])),
-            "suspiciousKeywords": list(extracted.get("suspicious_keywords", []))
+            "suspiciousKeywords": list(extracted.get("suspicious_keywords", [])),
+            
+            # ✅ NEW FIELD
+            "emails": list(extracted.get("emails", []))
         },
         "agentNotes": agent_notes
     }
 
     logging.info(f"Initiating callbacks for session={session_id}")
 
-    # --- ACTION 1: Send to GUVI Production ---
+    # Send to GUVI
     for attempt in range(2):
         try:
             res = requests.post(
@@ -107,7 +168,7 @@ def send_final_callback(
         except Exception as e:
             logging.error(f"GUVI Production failed (attempt {attempt + 1}): {e}")
 
-    # --- ACTION 2: Mirror to Personal Webhook (For your tracking) ---
+    # Mirror to webhook
     try:
         requests.post(
             MY_PERSONAL_WEBHOOK,
@@ -115,6 +176,6 @@ def send_final_callback(
             headers={"Content-Type": "application/json"},
             timeout=5
         )
-        logging.info("Mirror copy sent to Webhook.site successfully.")
+        logging.info("Mirror copy sent to Webhook successfully.")
     except Exception as e:
-        logging.error(f"Mirroring to Webhook failed: {e}")
+        logging.error(f"Mirroring failed: {e}")
