@@ -1,7 +1,7 @@
 
 import requests
 import logging
-
+import time
 
 GUVI_PRODUCTION_URL = "https://hackathon.guvi.in/api/updateHoneyPotFinalResult"
 MY_PERSONAL_WEBHOOK = "https://viola-tetrabasic-elliptically.ngrok-free.dev/updateHoneyPotFinalResult"
@@ -57,7 +57,7 @@ def send_final_callback(
     # Mirror to your webhook
     try:
         requests.post(
-            MY_PERSONAL_URL,
+            MY_PERSONAL_WEBHOOK,
             json=payload,
             headers={"Content-Type": "application/json"},
             timeout=5
