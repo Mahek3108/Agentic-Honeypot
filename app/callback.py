@@ -155,7 +155,8 @@ def send_final_callback(
             "emailAddresses": [str(v) for v in extracted.get("emails", [])],
             "orderNumbers": [str(v) for v in extracted.get("order_ids", [])],
             "policyNumbers": [str(v) for v in extracted.get("policy_numbers", [])],
-            "caseIds": [str(v) for v in extracted.get("case_ids", [])]
+            "caseIds": [str(v) for v in extracted.get("case_ids", [])],
+            "suspiciousKeywords": [str(v) for v in extracted.get("suspicious_keywords", [])]
         },
         "agentNotes": str(agent_notes),
         "scamType": scam_type,
