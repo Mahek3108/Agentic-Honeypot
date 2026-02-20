@@ -65,8 +65,7 @@ async def honeypot_endpoint(
             scam_detected=True,
             total_messages= len(history)+2,
             extracted=session["extracted"],
-            agent_notes=agent_notes,
-        session_start_time= session["start_time"]
+            agent_notes=agent_notes
         )
         session["callback_sent"] = True
 
