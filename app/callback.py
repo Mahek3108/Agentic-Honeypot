@@ -134,7 +134,7 @@ def send_final_callback(
     """
     Sends final output in exact required evaluation format.
     """
-
+    
     # Engagement duration (proportional, not inflated)
     engagement_duration = max(60, total_messages * 15)
 
