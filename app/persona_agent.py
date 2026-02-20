@@ -2,7 +2,7 @@ import requests
 from app.config import MISTRAL_API_KEY, MISTRAL_API_URL, MISTRAL_MODEL
 import random
 from app.llm_client import call_llm
-from app.config import SYSTEM_PROMPT
+# from app.config import SYSTEM_PROMPT
 
 
 # # SYSTEM_PROMPT = """
