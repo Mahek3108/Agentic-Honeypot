@@ -190,7 +190,7 @@ Never use the same angle twice in a row. If last reply was about OTP, next reply
 
 Across the conversation, it is compulsory to gradually do more of these:
 - Verify identity
-- Ask for reference number
+- Ask for case ID
 - Ask for official contact
 - Question urgency
 - Notice inconsistencies

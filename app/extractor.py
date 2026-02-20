@@ -327,13 +327,33 @@ def extract_intelligence(text: str):
     #         final_phones.add(p)
     
 
+    # phone_pattern = r"""
+    # (
+    #     (?:\+91[\-\s]?)?[6-9]\d{9}              # Indian mobile
+    #     |
+    #     1800[\-\s]?\d{3}[\-\s]?\d{4}            # Toll-free 1800
+    #     |
+    #     \b\d{3,4}[\-\s]\d{3}[\-\s]\d{4}\b       # 000-000-0000 style
+    # )
+    # """
+
+    # raw_phones = re.findall(phone_pattern, text, flags=re.VERBOSE)
+
+    # final_phones = set()
+
+    # for p in raw_phones:
+    #     clean_p = re.sub(r"\D", "", p)
+
+    #     # Avoid phone inside bank account
+    #     if not any(clean_p in b for b in raw_bank_numbers):
+    #         final_phones.add(p.strip())
     phone_pattern = r"""
     (
         (?:\+91[\-\s]?)?[6-9]\d{9}              # Indian mobile
         |
-        1800[\-\s]?\d{3}[\-\s]?\d{4}            # Toll-free 1800
+        1800[\-\s]?\d{3}[\-\s]?\d{4}            # Toll-free
         |
-        \b\d{3,4}[\-\s]\d{3}[\-\s]\d{4}\b       # 000-000-0000 style
+        0\d{2,4}[\-\s]?\d{6,8}                  # Landline like 0123-456789
     )
     """
 
@@ -344,10 +364,9 @@ def extract_intelligence(text: str):
     for p in raw_phones:
         clean_p = re.sub(r"\D", "", p)
 
-        # Avoid phone inside bank account
+        # avoid overlap with bank account numbers
         if not any(clean_p in b for b in raw_bank_numbers):
             final_phones.add(p.strip())
-
     # -------------------------
     # 5. URLS (Phishing)
     # -------------------------
