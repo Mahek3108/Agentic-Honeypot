@@ -137,7 +137,7 @@ def send_final_callback(
     """
     
     # Engagement duration (proportional, not inflated)
-    engagement_duration = max(60, total_messages * 15)
+    # engagement_duration = max(60, total_messages * 15)
 
     scam_type = infer_scam_type(extracted)
     confidence = calculate_confidence(scam_detected, extracted)
