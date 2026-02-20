@@ -27,26 +27,20 @@ def extract_intelligence(text: str):
 
     text_lower = text.lower()
 
-    # -------------------------
-    # 1. EMAILS
-    # -------------------------
     email_pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"
     emails = set(re.findall(email_pattern, text))
 
-    # -------------------------
-    # 2. UPI IDS (email-safe)
-    # -------------------------
-    upi_pattern = r"\b[a-zA-Z0-9._\-]{2,256}@[a-zA-Z]{2,64}\b"
-    potential_upis = re.findall(upi_pattern, text)
+    upi_pattern = r"\b[A-Za-z0-9._-]{2,}@[A-Za-z0-9]{2,}\b"
+    potential_upis = set(re.findall(upi_pattern, text))
 
-    upi_ids = {
-        u for u in potential_upis
-        if u not in emails
-    }
+    upi_ids = set()
 
-    # -------------------------
-    # 3. BANK ACCOUNTS (11–18 digits, context aware)
-    # -------------------------
+    for u in potential_upis:
+        
+        if any(u in e for e in emails):
+            continue
+        upi_ids.add(u)
+
     bank_pattern = r"\b\d{11,18}\b"
     raw_bank_numbers = set(re.findall(bank_pattern, text))
 
