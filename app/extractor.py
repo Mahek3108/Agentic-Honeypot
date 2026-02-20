@@ -313,17 +313,39 @@ def extract_intelligence(text: str):
     # -------------------------
     # 4. PHONE NUMBERS (Indian)
     # -------------------------
-    phone_pattern = r"(?:\+91|91)?[-\s]?[6789]\d{9}\b"
-    raw_phones = re.findall(phone_pattern, text)
+    # phone_pattern = r"(?:\+91|91)?[-\s]?[6789]\d{9}\b"
+    # raw_phones = re.findall(phone_pattern, text)
+
+    # final_phones = set()
+
+    # for p in raw_phones:
+    #     clean_p = re.sub(r"\D", "", p)[-10:]
+
+    #     # avoid phone inside bank account
+    #     if not any(clean_p in b for b in raw_bank_numbers):
+    #         final_phones.add(p)
+    
+
+    phone_pattern = r"""
+    (
+        (?:\+91[\-\s]?)?[6-9]\d{9}              # Indian mobile
+        |
+        1800[\-\s]?\d{3}[\-\s]?\d{4}            # Toll-free 1800
+        |
+        \b\d{3,4}[\-\s]\d{3}[\-\s]\d{4}\b       # 000-000-0000 style
+    )
+    """
+
+    raw_phones = re.findall(phone_pattern, text, flags=re.VERBOSE)
 
     final_phones = set()
 
     for p in raw_phones:
-        clean_p = re.sub(r"\D", "", p)[-10:]
+        clean_p = re.sub(r"\D", "", p)
 
-        # avoid phone inside bank account
+        # Avoid phone inside bank account
         if not any(clean_p in b for b in raw_bank_numbers):
-            final_phones.add(p)
+            final_phones.add(p.strip())
 
     # -------------------------
     # 5. URLS (Phishing)
