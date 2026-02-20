@@ -96,43 +96,26 @@ def extract_intelligence(text: str):
     #     # Avoid phone inside bank account
     #     if not any(clean_p in b for b in raw_bank_numbers):
     #         final_phones.add(p.strip())
-    # phone_pattern = r"""
-    # (
-    #     (?:\+91[\-\s]?)?[6-9]\d{9}              # Indian mobile
-    #     |
-    #     1800[\-\s]?\d{3}[\-\s]?\d{4}            # Toll-free
-    #     |
-    #     0\d{2,4}[\-\s]?\d{6,8}                  # Landline like 0123-456789
-    # )
-    # """
-
-    # raw_phones = re.findall(phone_pattern, text, flags=re.VERBOSE)
-
-    # final_phones = set()
-
-    # for p in raw_phones:
-    #     clean_p = re.sub(r"\D", "", p)
-
-    #     # avoid overlap with bank account numbers
-    #     if not any(clean_p in b for b in raw_bank_numbers):
-    #         final_phones.add(p.strip())
     phone_pattern = r"""
-    (?:\+91[-\s]?)?[6-9]\d{9}\b
-    |
-    \b1\d{3}[-\s]?\d{3}[-\s]?\d{3}\b
-    |
-    \b0\d{2,4}[-\s]?\d{5,8}\b
-    """
+        (?:\+91[-\s]?)?[6-9]\d{9}\b                     # Mobile with or without +91
+        |
+        \b[6-9]\d{9}\b                                  # Plain 10 digit mobile
+        |
+        \b1\d{3}[-\s]?\d{3,4}[-\s]?\d{3,4}\b            # Toll free 4-3-3 / 4-3-4 / 4-4-4
+        |
+        \b0\d{2,4}[-\s]?\d{6,8}\b                       # Landline STD codes
+        """
 
-    raw_phones = re.findall(phone_pattern, text, re.VERBOSE)
+    raw_phones = re.findall(phone_pattern, text, flags=re.VERBOSE)
 
     final_phones = set()
-    for p in raw_phones:
-            clean_p = re.sub(r"\D", "", p)
 
-            # avoid overlap with bank account numbers
-            if not any(clean_p in b for b in raw_bank_numbers):
-                final_phones.add(p.strip())
+    for p in raw_phones:
+        clean_p = re.sub(r"\D", "", p)
+
+        # avoid overlap with bank account numbers
+        if not any(clean_p in b for b in raw_bank_numbers):
+            final_phones.add(p.strip())
     # -------------------------
     # 5. URLS (Phishing)
     # -------------------------
