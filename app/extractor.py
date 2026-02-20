@@ -297,17 +297,20 @@ def extract_intelligence(text: str):
             "phishing_urls": [],
             "phone_numbers": [],
             "emails": [],
+            "order_ids": [],
+            "policy_numbers": [],
+            "case_ids": [],
             "suspicious_keywords": [],
             "misc": {}
         }
 
     text_lower = text.lower()
     
-    # 1. ---------- Emails (Strict & Hyphen-Safe) ----------
+    # 1 Emails
     email_pattern = r"[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}"
     emails = set(re.findall(email_pattern, text))
 
-    # 2. ---------- UPI (Anti-Email & Dot-Safe Logic) ----------
+    # 2.UPI 
     raw_upi_pattern = r"[\w\.-]+@[\w\.-]+"
     potential_upis = re.findall(raw_upi_pattern, text)
     
@@ -317,46 +320,96 @@ def extract_intelligence(text: str):
         if "@" in candidate_lower:
             parts = candidate_lower.split("@")
             handle_part = parts[1] if len(parts) > 1 else ""
-            # Handle mein dot nahi hona chahiye aur email ka part nahi hona chahiye
+            
             if "." not in handle_part:
                 if not any(candidate_lower in e.lower() for e in emails):
                     upi_ids.append(candidate)
 
-    # 3. ---------- Bank Accounts (Pehle bade numbers uthao) ----------
+    # 3.bank accounts
     bank_pattern = r"\b\d{11,18}\b"
     raw_bank_numbers = set(re.findall(bank_pattern, text))
 
-    # 4. ---------- Phone Numbers (Indian Context + Strict Boundary) ----------
-    # \b ensures 10 digit ke aage piche aur digits na ho (overlap prevention)
+    # 4. Phone Numbers 
+    
     phone_pattern = r"(?:\+91|91)?[\s\-]?\b\d{10}\b" 
     found_phones = set(re.findall(phone_pattern, text))
+    
     
     final_phones = []
     for p in found_phones:
         clean_p = re.sub(r"\D", "", p)[-10:]
-        # Agar ye 10-digit number kisi 11-18 digit bank account ka part hai, toh ignore karo
+        
         if not any(clean_p in b for b in raw_bank_numbers):
             final_phones.append(p)
 
-    # Context filter for Bank Accounts
     bank_context_words = ["acc", "account", "a/c", "bank", "transfer", "ifsc", "beneficiary", "deposit"]
     bank_accounts = []
     if any(ctx in text_lower for ctx in bank_context_words):
         bank_accounts = list(raw_bank_numbers)
 
-    # 5. ---------- Phishing URLs ----------
+
+    # order_pattern = r"(?:order\s*(?:id|number)?[:\-\s]+)([A-Za-z0-9\-]{5,})"
+    # order_ids=set(re.findall(order_pattern,text, flags=re.IGNORECASE))
+
+    # policy_pattern = r"(?:policy\s*{?:no|number)?[:\-\s]+)([A-Za-z0-9\-]{5,})"
+    # policy_numbers= set(re.findall(policy_pattern, text, flags=re.IGNORECASE))
+
+    # case_pattern = r"(?:case\s*(?:id|number)?[:\-\s]+)([A-Za-z0-9\-](5,})"
+    # case_ids = set(re.findall(case_pattern, text, flags= re.IGNORECASE))
+    # 5. url
     url_pattern = r"https?://(?:[-\w.]|(?:%[\da-fA-F]{2}))+"
     urls = set(re.findall(url_pattern, text))
+
+    order_ids = set()
+    policy_numbers = set()
+    case_ids = set()
+
+    lines = text.splitlines()
+
+    for line in lines:
+        lower_line = line.lower()
+        tokens = re.findall(r"\b[A-Za-z0-9\-]{4,}\b", line)
+
+        for token in tokens:
+            if token.isdigit() and len(token) < 4:
+                continue
+
+            if "order" in lower_line:
+                order_ids.add(token)
+
+            elif "policy" in lower_line:
+                policy_numbers.add(token)
+
+            elif "case" in lower_line:
+                case_ids.add(token)
+
+    # ---------------------------------------------------
+    # 7. De-duplication Hierarchy
+    # Priority: bank > order > policy > case
+    # ---------------------------------------------------
+    bank_set = set(bank_accounts)
+
+    order_ids -= bank_set
+    policy_numbers -= bank_set
+    case_ids -= bank_set
+
+    policy_numbers -= order_ids
+    case_ids -= order_ids
+    case_ids -= policy_numbers
+
 
     # 6. ---------- Suspicious Keywords ----------
     suspicious_found = {kw for kw in SUSPICIOUS_KEYWORDS if kw in text_lower}
 
     return {
-        "upi_ids": list(set(upi_ids)),
-        "bank_accounts": list(set(bank_accounts)),
+        "upi_ids": list(upi_ids),
+        "bank_accounts": list(bank_accounts),
         "phishing_urls": list(urls),
         "phone_numbers": list(set(final_phones)),
         "emails": list(emails),
+        "order_ids": list(order_ids),
+        "policy_numbers": list(policy_numbers),
+        "case_ids": list(case_ids),
         "suspicious_keywords": list(suspicious_found),
         "misc": {}
     }
