@@ -18,40 +18,6 @@ The architecture is modular, scalable, and evaluation-safe (no hardcoded scenari
 
 ---
 
- High-Level Architecture
-
-                ┌────────────────────────┐
-                │  Hackathon Evaluator   │
-                └────────────┬───────────┘
-                             │
-                             ▼
-                ┌────────────────────────┐
-                │   FastAPI Endpoint     │
-                │     /honeypot          │
-                └────────────┬───────────┘
-                             │
-     ┌───────────────────────┼────────────────────────┐
-     ▼                       ▼                        ▼
-Session Memory        Scam Detection Engine    Intelligence Extractor
-(State Manager)       (Keyword + Heuristic)    (Regex + Context Logic)
-     │                       │                        │
-     └───────────────┬───────┴───────────────┬────────┘
-                     ▼                       ▼
-              Persona Agent (LLM)       Agent Notes Generator
-              (Human-like replies)      (LLM analysis summary)
-                     │
-                     ▼
-            Engagement Metrics Calculator
-                     │
-                     ▼
-               Final Callback Module
-                     │
-                     ▼
-          GUVI Evaluation Endpoint
-
-
----
-
  **Core Components**
 
 ---
