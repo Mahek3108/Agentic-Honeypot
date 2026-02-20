@@ -1,4 +1,4 @@
-from app.llm_client import call_llm
+from src.llm_client import call_llm
 
 AGENT_NOTES_PROMPT = """
 You are a cybersecurity analyst reviewing a scam conversation.

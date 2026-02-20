@@ -1,14 +1,14 @@
 
 from fastapi import FastAPI, Depends
-from app.schemas import HoneypotRequest
-from app.utils import verify_api_key
-from app.gatekeeper import detect_scam
-from app.memory import get_session
-from app.extractor import extract_intelligence
-from app.persona_agent import generate_agent_reply
-from app.casual_llm import generate_casual_reply
-from app.callback import send_final_callback
-from app.agent_notes_llm import generate_agent_notes_llm
+from src.schemas import HoneypotRequest
+from src.utils import verify_api_key
+from src.gatekeeper import detect_scam
+from src.memory import get_session
+from src.extractor import extract_intelligence
+from src.persona_agent import generate_agent_reply
+from src.casual_llm import generate_casual_reply
+from src.callback import send_final_callback
+from src.agent_notes_llm import generate_agent_notes_llm
 import time
 app = FastAPI(title="Agentic HoneyPot")
 
@@ -63,7 +63,7 @@ async def honeypot_endpoint(
         session["scam_detected"]
         # and not session.get("callback_sent", False)
         and len(history) >= 10
-        
+
         
     ):
         send_final_callback(

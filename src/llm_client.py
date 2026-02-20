@@ -1,5 +1,5 @@
 import requests
-from app.config import MISTRAL_API_KEY, MISTRAL_API_URL, MISTRAL_MODEL
+from src.config import MISTRAL_API_KEY, MISTRAL_API_URL, MISTRAL_MODEL
 
 
 def call_llm(system_prompt: str, user_prompt: str, temperature: float = 0.6) -> str:

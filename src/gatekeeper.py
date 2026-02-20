@@ -1,6 +1,6 @@
 import re
 import requests
-from app.config import MISTRAL_API_KEY, MISTRAL_API_URL, MISTRAL_MODEL
+from src.config import MISTRAL_API_KEY, MISTRAL_API_URL, MISTRAL_MODEL
 
 SCAM_KEYWORDS = [
     "account blocked",

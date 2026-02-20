@@ -1,4 +1,4 @@
-from app.config import LLM_CLIENT
+from src.config import LLM_CLIENT
 
 def generate_casual_reply(text: str) -> str:
     """
