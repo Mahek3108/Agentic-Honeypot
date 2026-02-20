@@ -1,21 +1,3 @@
-Conversation opened. 1 unread message.
-
-Skip to content
-Using Gmail with screen readers
-in:spam 
-1 of 29
-(no subject)
-Spam
-Rajesh Shitap
-Attachments
-23:32 (3 minutes ago)
-to me
-
-Why is this message in spam? You have blocked rajms1977@gmail.com.
-Unblock senderMove to inbox
-
- One attachment
-  •  Scanned by Gmail
 # AI Conversational Honeypot API
 
 ## Description
@@ -40,7 +22,7 @@ The architecture is fully generic and does not rely on hardcoded scenario logic.
 
 ## Tech Stack
 
-### Language / Framework
+#### Language / Framework
 
 Python 3.10+
 
@@ -49,7 +31,7 @@ FastAPI – API framework
 Uvicorn – ASGI server
 
 
-### Key Libraries
+#### Key Libraries
 
 fastapi
 
@@ -66,7 +48,7 @@ datetime
 logging
 
 
-### AI / LLM
+#### AI / LLM
 
 OpenAI-compatible LLM API
 
@@ -85,7 +67,7 @@ The LLM is used strictly for conversational realism and analysis. Scam detection
 
 ## Setup Instructions
 
-1️⃣ Clone the Repository
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/honeypot-api.git
@@ -94,7 +76,7 @@ cd honeypot-api
 
 ---
 
-2️⃣ Install Dependencies
+### 2️⃣ Install Dependencies
 
 Create virtual environment (recommended):
 
@@ -112,7 +94,7 @@ pip install -r requirements.txt
 
 ---
 
-3️⃣ Set Environment Variables
+### 3️⃣ Set Environment Variables
 
 Create a .env file based on .env.example.
 
@@ -129,10 +111,10 @@ Never commit real API keys.
 
 ---
 
-4️⃣ Run the Application
+### 4️⃣ Run the Application
 
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+uvicorn src.main:app --host 0.0.0.0 --port 8000
 ```
 
 API will run at:
@@ -149,7 +131,7 @@ http://localhost:8000/docs
 
 ---
 
-##API Endpoint
+## API Endpoint
 
 URL
 
@@ -203,7 +185,7 @@ x-api-key: your-api-key
 
 ## Approach
 
-1️⃣ Scam Detection Strategy
+### 1️⃣ Scam Detection Strategy
 
 The system uses hybrid detection:
 
@@ -224,11 +206,11 @@ No scenario-specific hardcoding is used.
 
 ---
 
-2️⃣ Intelligence Extraction Strategy
+### 2️⃣ Intelligence Extraction Strategy
 
 Extraction is rule-based using regex and contextual filtering.
 
-### Extracted Entities
+#### Extracted Entities
 
 📞 Phone Numbers (mobile, toll-free, landline)
 
@@ -249,7 +231,7 @@ Extraction is rule-based using regex and contextual filtering.
 🚨 Suspicious Keywords
 
 
-### Context-aware extraction prevents:
+#### Context-aware extraction prevents:
 
 Overlapping entity misclassification
 
@@ -263,9 +245,9 @@ Extraction accumulates across conversation turns.
 
 ---
 
-3️⃣ Engagement Strategy
+### 3️⃣ Engagement Strategy
 
-### The honeypot persona:
+#### The honeypot persona:
 
 Simulates a realistic middle-aged non-technical user
 
@@ -278,7 +260,7 @@ Elicits information (ID, phone, website, case number, etc.)
 Avoids revealing sensitive data (OTP, PIN, account)
 
 
-### Conversation objectives:
+#### Conversation objectives:
 
 Sustain ≥8 turns
 
@@ -289,7 +271,7 @@ Trigger scammer to reveal intelligence
 Maintain natural tone
 
 
-### The LLM is guided via structured system prompts to:
+#### The LLM is guided via structured system prompts to:
 
 Avoid repetition
 
@@ -303,7 +285,7 @@ Maintain SMS-style brevity
 
 ---
 
-4️⃣ Engagement Metrics
+### 4️⃣ Engagement Metrics
 
 The system tracks:
 
@@ -319,7 +301,7 @@ These metrics align with evaluation scoring criteria.
 
 ---
 
-5️⃣ Final Callback Submission
+### 5️⃣ Final Callback Submission
 
 After conversation completion, a structured payload is sent:
 
@@ -343,24 +325,36 @@ Callback is sent once per session after sufficient engagement.
 
 ## Project Structure
 
-app/
-├── main.py
-├── gatekeeper.py
-├── extractor.py
-├── persona_agent.py
-├── agent_notes_llm.py
-├── callback.py
-├── memory.py
-├── schemas.py
-└── utils.py
+```bash
+## Project Structure
 
-docs/
-└── architecture.md
-
-requirements.txt
-.env.example
-README.md
-
+AGENTIC_HONEYPOT/
+│
+├── docs/
+│   └── architecture.md        # System architecture explanation
+│
+├── src/
+│   ├── main.py                # FastAPI entry point (API routes)
+│   ├── schemas.py             # Request/response validation models
+│   ├── config.py              # Configuration and environment handling
+│   ├── utils.py               # Helper utility functions
+│   ├── gatekeeper.py          # Scam detection logic
+│   ├── extractor.py           # Intelligence extraction engine
+│   ├── memory.py              # Session state management
+│   ├── persona_agent.py       # Primary honeypot conversational agent
+│   ├── casual_llm.py          # Casual reply generator (non-scam cases)
+│   ├── strategies.py          # Engagement & questioning strategies
+│   ├── llm_client.py          # LLM API wrapper
+│   ├── agent_notes.py         # Rule-based agent note generator
+│   ├── agent_notes_llm.py     # LLM-based behavioral analysis
+│   ├── callback.py            # Final evaluation payload sender
+│   └── __pycache__/           # Python cache files
+│
+├── .env                       # Environment variables (not committed)
+├── .gitignore                 # Git ignore rules
+├── requirements.txt           # Python dependencies
+├── README.md                  # Project documentation
+```
 
 ---
 
@@ -414,5 +408,3 @@ Structured evaluation-compliant reporting
 
 
 The architecture is modular, scalable, and fully aligned with hackathon evaluation requirements.
-readme.md
-Displaying readme.md.
