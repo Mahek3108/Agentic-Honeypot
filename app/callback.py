@@ -128,6 +128,7 @@ def send_final_callback(
     session_id: str,
     scam_detected: bool,
     total_messages: int,
+    engagement_duration: int,
     extracted: dict,
     agent_notes: str,
 ):
