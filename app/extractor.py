@@ -272,6 +272,7 @@ def extract_intelligence(text: str):
             "policy_numbers": [],
             "case_ids": [],
             "suspicious_keywords": [],
+            "red_flags":[],
             "misc": {}
         }
 
@@ -418,5 +419,6 @@ def extract_intelligence(text: str):
         "policy_numbers": list(policy_numbers),
         "case_ids": list(case_ids),
         "suspicious_keywords": list(suspicious_found),
+        "red_flags": list(suspicious_found),
         "misc": {}
     }

@@ -29,4 +29,4 @@ def generate_casual_reply(text: str) -> str:
 
     except Exception:
         # absolute safety fallback
-        return "Hello, kaun bol raha hai?"
+        return "Hello, who is this?"
