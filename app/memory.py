@@ -17,7 +17,11 @@ def get_session(session_id: str):
                 "phishing_urls": set(),
                 "phone_numbers": set(),
                 "suspicious_keywords": set(),
-                "emails": set(),          # ✅ ADD THIS
+                "emails": set(),
+                "order_ids": set(),
+                "policy_numbers": set(),
+                "case_ids": set(),
+        
                 "misc": {}
             }
         }
