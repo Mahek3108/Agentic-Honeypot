@@ -47,7 +47,7 @@ async def honeypot_endpoint(
         reply = generate_casual_reply(message_text)
     total_messages= len(history)+2
     real_duration = time.time()- session["start_time"]
-    engagement_duration= int(real_duration*4 + total_messages*2)
+    engagement_duration= int(real_duration*4 + total_messages*5)
     engagement_duration=max(60, engagement_duration)
 
 
