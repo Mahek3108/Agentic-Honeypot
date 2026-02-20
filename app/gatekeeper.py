@@ -58,14 +58,13 @@ def llm_scam_check(text: str) -> bool:
         return result.upper() == "TRUE"
 
     except Exception:
-        # Fail-safe: assume scam if model fails
+        
         return True
 
 
 def detect_scam(text: str) -> bool:
-    # Step 1: fast rule-based check
+    
     if quick_rule_check(text):
         return True
 
-    # Step 2: LLM-based decision
     return llm_scam_check(text)

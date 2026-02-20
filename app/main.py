@@ -62,7 +62,8 @@ async def honeypot_endpoint(
     if (
         session["scam_detected"]
         # and not session.get("callback_sent", False)
-        and len(history) >= 8
+        and len(history) >= 10
+        
         
     ):
         send_final_callback(

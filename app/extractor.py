@@ -383,10 +383,6 @@ def extract_intelligence(text: str):
             elif "case" in lower_line:
                 case_ids.add(token)
 
-    # ---------------------------------------------------
-    # 7. De-duplication Hierarchy
-    # Priority: bank > order > policy > case
-    # ---------------------------------------------------
     bank_set = set(bank_accounts)
 
     order_ids -= bank_set
@@ -398,7 +394,7 @@ def extract_intelligence(text: str):
     case_ids -= policy_numbers
 
 
-    # 6. ---------- Suspicious Keywords ----------
+    # 6. Suspicious Keywords 
     suspicious_found = {kw for kw in SUSPICIOUS_KEYWORDS if kw in text_lower}
 
     return {

@@ -43,23 +43,23 @@ def test_first_message():
     try:
         response = requests.post(API_URL, json=payload, headers=headers, timeout=15)
         
-        print(f"\n✅ Status Code: {response.status_code}")
-        print(f"✅ Content-Type: {response.headers.get('Content-Type')}")
-        print(f"\n📄 Response Body:")
+        print(f"\n Status Code: {response.status_code}")
+        print(f" Content-Type: {response.headers.get('Content-Type')}")
+        print(f"\n Response Body:")
         print(response.text)
         
         # Parse and validate
         data = response.json()
-        print(f"\n📦 Parsed JSON:")
+        print(f"\n Parsed JSON:")
         print(json.dumps(data, indent=2, ensure_ascii=False))
         
         # Validate required fields
-        print(f"\n🔍 Validation:")
-        assert "status" in data, "❌ Missing 'status' field"
-        assert "reply" in data, "❌ Missing 'reply' field"
-        assert data["status"] == "success", "❌ Status is not 'success'"
-        assert isinstance(data["reply"], str), "❌ Reply is not a string"
-        assert len(data["reply"]) > 0, "❌ Reply is empty"
+        print(f"\n Validation:")
+        assert "status" in data, " Missing 'status' field"
+        assert "reply" in data, " Missing 'reply' field"
+        assert data["status"] == "success", " Status is not 'success'"
+        assert isinstance(data["reply"], str), " Reply is not a string"
+        assert len(data["reply"]) > 0, " Reply is empty"
         
         # Check for extra fields (should only have status and reply)
         expected_fields = {"status", "reply"}
@@ -67,22 +67,22 @@ def test_first_message():
         extra_fields = actual_fields - expected_fields
         
         if extra_fields:
-            print(f"⚠️  Warning: Extra fields found: {extra_fields}")
+            print(f"  Warning: Extra fields found: {extra_fields}")
             print("   GUVI expects ONLY 'status' and 'reply'")
         else:
-            print("✅ Response has exactly 2 fields: status and reply")
+            print(" Response has exactly 2 fields: status and reply")
         
-        print("\n✅ TEST 1 PASSED!")
+        print("\n TEST 1 PASSED!")
         return True
         
     except requests.exceptions.RequestException as e:
-        print(f"\n❌ Request failed: {e}")
+        print(f"\n Request failed: {e}")
         return False
     except json.JSONDecodeError as e:
-        print(f"\n❌ Invalid JSON response: {e}")
+        print(f"\n Invalid JSON response: {e}")
         return False
     except AssertionError as e:
-        print(f"\n❌ Validation failed: {e}")
+        print(f"\n Validation failed: {e}")
         return False
 
 
@@ -128,17 +128,17 @@ def test_follow_up_message():
     try:
         response = requests.post(API_URL, json=payload, headers=headers, timeout=15)
         
-        print(f"\n✅ Status Code: {response.status_code}")
+        print(f"\n Status Code: {response.status_code}")
         data = response.json()
-        print(f"\n📦 Parsed JSON:")
+        print(f"\n Parsed JSON:")
         print(json.dumps(data, indent=2, ensure_ascii=False))
         
         assert "status" in data and "reply" in data
-        print("\n✅ TEST 2 PASSED!")
+        print("\n TEST 2 PASSED!")
         return True
         
     except Exception as e:
-        print(f"\n❌ TEST 2 FAILED: {e}")
+        print(f"\n TEST 2 FAILED: {e}")
         return False
 
 
@@ -172,27 +172,27 @@ def test_casual_message():
     try:
         response = requests.post(API_URL, json=payload, headers=headers, timeout=15)
         data = response.json()
-        print(f"\n📦 Response:")
+        print(f"\n Response:")
         print(json.dumps(data, indent=2, ensure_ascii=False))
         
         assert "status" in data and "reply" in data
-        print("\n✅ TEST 3 PASSED!")
+        print("\n TEST 3 PASSED!")
         return True
         
     except Exception as e:
-        print(f"\n❌ TEST 3 FAILED: {e}")
+        print(f"\n TEST 3 FAILED: {e}")
         return False
 
 
 if __name__ == "__main__":
-    print("\n" + "🚀 Starting API Tests" + "\n")
+    print("\n" + " Starting API Tests" + "\n")
     
     if API_URL == "https://your-api-url.com/honeypot":
-        print("❌ ERROR: Please update API_URL in the script with your actual API URL")
+        print(" ERROR: Please update API_URL in the script with your actual API URL")
         exit(1)
     
     if API_KEY == "your-api-key-here":
-        print("❌ ERROR: Please update API_KEY in the script with your actual API key")
+        print(" ERROR: Please update API_KEY in the script with your actual API key")
         exit(1)
     
     results = []
@@ -205,12 +205,12 @@ if __name__ == "__main__":
     print("=" * 70)
     
     for test_name, passed in results:
-        status = "✅ PASSED" if passed else "❌ FAILED"
+        status = " PASSED" if passed else " FAILED"
         print(f"{test_name}: {status}")
     
     all_passed = all(result[1] for result in results)
     
     if all_passed:
-        print("\n🎉 All tests passed! Your API is ready for GUVI evaluation.")
+        print("\n All tests passed! Your API is ready for GUVI evaluation.")
     else:
-        print("\n⚠️  Some tests failed. Please fix the issues above.")
+        print("\n  Some tests failed. Please fix the issues above.")

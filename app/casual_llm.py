@@ -7,7 +7,7 @@ def generate_casual_reply(text: str) -> str:
     """
     try:
         response = LLM_CLIENT.chat.completions.create(
-            model="mistral-small",   # same provider, cheap & fast
+            model="mistral-small",   
             messages=[
                 {
                     "role": "system",
