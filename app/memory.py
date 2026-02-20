@@ -17,6 +17,7 @@ def get_session(session_id: str):
                 "phishing_urls": set(),
                 "phone_numbers": set(),
                 "suspicious_keywords": set(),
+                "red_flags": set(),
                 "emails": set(),
                 "order_ids": set(),
                 "policy_numbers": set(),
