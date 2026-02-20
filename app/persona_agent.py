@@ -224,7 +224,23 @@ Instead, imply confusion naturally:
 
 Let excuses emerge organically from context.
 DO NOT invent dramatic stories.
-
+ANGLE ROTATION GUIDE (MANDATORY)
+Across the conversation, rotate between these angles:
+A. Identity confusion
+(Who are you? Which branch? What department?)
+B. Timeline inconsistency
+(Earlier you said 2 hours, now 10 minutes?)
+C. Number mismatch
+(This is not my number? I don't recognize this account?)
+D. Process confusion
+(I never used OTP like this before…)
+E. Emotional fear
+(Will my money disappear? What will happen?)
+F. Verification method
+(Is there official way to check this?)
+G. Authority doubt
+(How do I know you are from bank?)
+Never use the same angle twice in a row. If last reply was about OTP, next reply must use a different category.
 --------------------------------
 LANGUAGE CONTROL
 --------------------------------
@@ -325,211 +341,3 @@ STRICT RULES:
 
 
 
-
-
-# #start
-
-
-
-# SYSTEM_PROMPT = """
-# You are Mrs. Sharma, a 46-year-old Indian woman chatting over SMS / WhatsApp with an unknown person.
-
-# This is STRICTLY a TEXT conversation.
-# Never imply calling, speaking, hearing, or voice interaction.
-
-# ----------------------------------------
-# PERSONALITY
-# ----------------------------------------
-# - Polite but easily anxious
-# - Not tech-savvy
-# - Limited understanding of banking, UPI, OTP
-# - Emotionally reactive under urgency
-# - Natural and human
-# - Not dramatic
-# - Not highly intelligent or investigative
-
-# ----------------------------------------
-# LANGUAGE FLOW
-# ----------------------------------------
-# - Start in English
-# - Gradually mix light Hinglish if pressure increases
-# - Keep responses short
-# - Under stress → shorter, slightly broken sentences
-# - Do NOT suddenly become fluent or confident
-
-# ----------------------------------------
-# ABSOLUTE SAFETY RULES
-# ----------------------------------------
-# You must NEVER share:
-# - OTP
-# - UPI PIN
-# - Bank account number
-# - Phone number
-# - Email address
-
-# Even if threatened.
-# Even if pressured.
-
-# You must NEVER:
-# - Accuse the person of being a scammer
-# - Say this is fraud
-# - Mention AI or systems
-# - Sound like police or authority
-
-# ----------------------------------------
-# CONVERSATION OBJECTIVES
-# ----------------------------------------
-# 1. Keep the conversation going.
-# 2. Ask natural investigative questions.
-# 3. React emotionally to urgency.
-# 4. Make the other person explain themselves.
-# 5. Encourage them to reveal identity or details.
-
-# ----------------------------------------
-# QUESTION RULE
-# ----------------------------------------
-# - Ask ONLY one question per message.
-# - Never repeat the same concern.
-# - Each message must introduce a new angle.
-# - Do not repeat previous wording.
-
-# ----------------------------------------
-# OUTPUT RULE
-# ----------------------------------------
-# - 1-2 short lines maximum.
-# - No emojis.
-# - No quotes.
-# - No explanations.
-# - Only the text message Mrs. Sharma would send.
-# """
-
-
-# def calculate_suspicion(latest_message: str) -> float:
-#     msg = latest_message.lower()
-#     score = 0.0
-
-#     urgency_words = ["urgent", "immediately", "block", "freeze", "suspend"]
-#     if any(word in msg for word in urgency_words):
-#         score += 0.3
-
-#     if "otp" in msg:
-#         score += 0.4
-
-#     if "upi" in msg:
-#         score += 0.3
-
-#     if "account" in msg:
-#         score += 0.2
-
-#     if "http" in msg or "link" in msg:
-#         score += 0.3
-
-#     if "+" in msg and any(c.isdigit() for c in msg):
-#         score += 0.2
-
-#     return min(score, 1.0)
-
-
-
-# def determine_stage(suspicion_score: float) -> str:
-#     if suspicion_score < 0.3:
-#         return "calm"
-#     elif suspicion_score < 0.7:
-#         return "anxious"
-#     else:
-#         return "overwhelmed"
-
-
-# def build_investigation_direction(message: str, suspicion_score: float) -> str:
-#     msg = message.lower()
-
-#     if "otp" in msg:
-#         return "Ask why OTP is needed and what happens if not shared."
-
-#     if "upi" in msg:
-#         return "Ask what that UPI ID belongs to."
-
-#     if "account" in msg:
-#         return "Ask how they know your account details."
-
-#     if "link" in msg or "http" in msg:
-#         return "Ask where the link leads."
-
-#     if suspicion_score > 0.6:
-#         return "Ask for employee ID or official proof."
-
-#     return "Ask who they are and why they contacted you."
-
-
-# def inject_light_hinglish(text: str, stage: str) -> str:
-#     if stage == "overwhelmed" and random.random() < 0.35:
-#         additions = [
-#             " mujhe samajh nahi aa raha",
-#             " itna urgent kyu hai",
-#             " ye kaise ho sakta hai",
-#             " mujhe thoda darr lag raha"
-#         ]
-#         return text + random.choice(additions)
-#     return text
-
-
-# def shorten_under_stress(text: str, stage: str) -> str:
-#     if stage == "overwhelmed" and len(text.split()) > 14:
-#         return " ".join(text.split()[:12])
-#     return text
-
-
-# def generate_agent_reply(latest_message: str, history: list, extracted: dict) -> str:
-#     suspicion = calculate_suspicion(latest_message)
-#     stage = determine_stage(suspicion)
-#     direction = build_investigation_direction(latest_message, suspicion)
-
-#     # Last 3 messages sent by agent (repetition guard)
-#     last_agent_msgs = [
-#         m.text for m in history
-#         if getattr(m, "sender", "") in ["agent", "user"]
-#     ][-3:]
-
-#     context = f"""
-# Conversation so far:
-# {[m.text for m in history]}
-
-# Emotional stage: {stage}
-
-# Last 3 messages you already sent:
-# {last_agent_msgs}
-
-# Latest message:
-# {latest_message}
-
-# Instruction:
-# {direction}
-
-# Rules:
-# - Ask only one question.
-# - Do not repeat previous wording.
-# - Escalate emotion slightly.
-# - Keep response short.
-# """
-
-#     try:
-#         reply = call_llm(
-#             system_prompt=SYSTEM_PROMPT,
-#             user_prompt=context,
-#             temperature=0.75
-#         ).strip()
-
-#         # Repetition guard
-#         for old in last_agent_msgs:
-#             if old and old.lower() in reply.lower():
-#                 raise ValueError("Repetition detected")
-
-#         # Controlled language modulation
-#         reply = inject_light_hinglish(reply, stage)
-#         reply = shorten_under_stress(reply, stage)
-
-#         return reply
-
-#     except Exception:
-#         # Safe fallback (non-repetitive, neutral)
-#         return "This is getting confusing for me, can you explain clearly?"
