@@ -18,7 +18,7 @@ async def honeypot_endpoint(
     payload: HoneypotRequest,
     _=Depends(verify_api_key)
 ):
-    # 🔹 REQUIRED: message MUST exist
+    # REQUIRED: message MUST exist
     incoming = payload.message
     message_text = incoming.text.strip()
 

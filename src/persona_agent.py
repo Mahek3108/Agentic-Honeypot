@@ -192,7 +192,7 @@ STRICT RULES:
             temperature=0.75
         ).strip()
 
-        # Repetition guard (semantic-lite)
+        # Repetition guard 
         for old in last_agent_msgs:
             if old and old.lower() in raw_reply.lower():
                 raise ValueError("Repetition detected")
